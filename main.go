@@ -17,7 +17,7 @@ func main() {
 	fmt.Printf("We have total of %v tickets and %v left\n", conferenceTickets, remainingTickets)
 	fmt.Println("Get your tickets here to attend")
 
-	for {
+	for remainingTickets > 0 && len(booking) < 50 {
 		var firstName string
 		var lastName string
 		var email string
@@ -32,17 +32,37 @@ func main() {
 		fmt.Println("How many tickets would you like to buy?")
 		fmt.Scan(&userTickets)
 
-		remainingTickets = remainingTickets - userTickets
-		booking = append(booking, firstName+" "+lastName)
+		isValidName := len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketNumber := userTickets > 0 && userTickets < remainingTickets
 
-		fmt.Printf("Thank you %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets left for %v\n", remainingTickets, conferenceName)
+		if isValidName && isValidEmail && isValidTicketNumber {
+			remainingTickets = remainingTickets - userTickets
+			booking = append(booking, firstName+" "+lastName)
 
-		firstNames := []string{}
-		for _, value := range booking {
-			var names = strings.Fields(value)
-			firstNames = append(firstNames, names[0])
+			fmt.Printf("Thank you %v %v for booking %v tickets. You will recieve a confirmation email at %v\n", firstName, lastName, userTickets, email)
+			fmt.Printf("%v tickets left for %v\n", remainingTickets, conferenceName)
+
+			firstNames := []string{}
+			for _, value := range booking {
+				var names = strings.Fields(value)
+				firstNames = append(firstNames, names[0])
+			}
+			fmt.Printf("The client names: %v\n", firstNames)
+			if remainingTickets == 0 {
+				fmt.Println("All the tickets are sold")
+				break
+			}
+		} else {
+			if !isValidName {
+				fmt.Println("Your name is invalid")
+			}
+			if !isValidEmail {
+				fmt.Println("Your email is invalid")
+			}
+			if !isValidTicketNumber {
+				fmt.Println("Number of tickets is invalid")
+			}
 		}
-		fmt.Printf("The client names: %v\n", firstNames)
 	}
 }
